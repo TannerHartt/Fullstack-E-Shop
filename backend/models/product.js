@@ -57,6 +57,14 @@ const productScehma = mongoose.Schema({
     }
 });
 
+productScehma.virtual('id').get(function () {
+    return this._id.toHexString();
+}); // This adds an id property to the schema that does not include the underscore
+
+productScehma.set('toJSON', {
+    virtuals: true
+});
+
 const Product = mongoose.model('Product', productScehma);
 
 module.exports = Product;
