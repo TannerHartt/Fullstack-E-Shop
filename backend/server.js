@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const app = express();
 const api = process.env.API_URL;
 const cors = require('cors');
+const auth = require('./middleware/jwt');
 
 
 // Middleware
@@ -12,6 +13,7 @@ app.use(cors());
 app.options('*', cors());
 app.use(express.json());
 app.use(morgan('tiny'));
+app.use(auth());
 
 
 const productsRouter = require('./routes/products');
