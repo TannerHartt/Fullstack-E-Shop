@@ -6,6 +6,7 @@ const app = express();
 const api = process.env.API_URL;
 const cors = require('cors');
 const auth = require('./middleware/jwt');
+const errorHandler = require('./middleware/error');
 
 
 // Middleware
@@ -14,6 +15,7 @@ app.options('*', cors());
 app.use(express.json());
 app.use(morgan('tiny'));
 app.use(auth());
+app.use(errorHandler);
 
 
 const productsRouter = require('./routes/products');
