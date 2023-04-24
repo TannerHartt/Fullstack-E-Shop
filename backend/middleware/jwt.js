@@ -7,6 +7,7 @@ function auth() {
     return expressjwt({
         secret,
         algorithms: ['HS256'],
+        isRevoked: isRevoked
     }).unless({
         path: [
             { url: /\/api\/products(.*)/ , methods: ['GET', 'OPTIONS'] },
@@ -15,6 +16,21 @@ function auth() {
             `${api}/users/register`,
         ]
     });
+}
+
+/**
+ * 
+ * @param {*} req The request
+ * @param {*} payload The data from the token (The user)
+ * @param {*} done 
+ */
+async function isRevoked(req, payload, done) {
+
+    if(!payload.payload.isAdmin){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 module.exports = auth;
