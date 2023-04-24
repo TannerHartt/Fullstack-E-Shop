@@ -141,6 +141,7 @@ router.post('/login', async (req, res) => {
     if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
         const token = jwt.sign({
             userId: user.id,
+            isAdmin: user.isAdmin // If user doesnt have admin role, they wont be able to access the admin routes
         }, secret, { expiresIn: '1d' });
 
         res.status(200).json({
@@ -178,6 +179,39 @@ router.post('/register', async (req, res) => {
             user
         });
     }
+});
+
+// Get total number of users
+router.get('/get/count', async (req, res) => {
+    const userCount = await User.countDocuments();
+
+    if (!userCount) {
+        res.status(500).json({
+            success: false
+        });
+    } else {
+        res.status(200).json({
+            success: true,
+            userCount
+        });
+    }
+});
+
+// Delete a product
+router.delete('/:id', (req, res) => {
+    User.findByIdAndRemove(req.params.id).then(user => {
+        if (user) {
+            return res.status(200).json({
+                success: true,
+                message: 'The user has been deleted successfully.'
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                message: 'The user was not found.'
+            });
+        }
+    });
 });
 
 
