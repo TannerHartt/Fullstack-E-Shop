@@ -122,14 +122,24 @@ router.put('/:id', async (req, res) => {
         return res.status(400).send(`Invalid Category, please try again.`);
     }
 
+    const file = req.file; // req.file is the image that was uploaded, must have an image in the request.
+    let imagepath; // Variable to store image path.
+    if (file) {
+        const filename = req.file.filename;
+        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+        imagepath = `${basePath}${filename}`;
+    } else {
+        imagepath = product.image;
+    }
+
     // If category exists, update product with new data that was sent in.
-    const product = await Product.findByIdAndUpdate(
+    const updatedProduct = await Product.findByIdAndUpdate(
         req.params.id,
         {
             name: req.body.name,
             description: req.body.description,
             richDescription: req.body.richDescription,
-            image: req.body.image,
+            image: imagepath,
             brand: req.body.brand,
             price: req.body.price,
             category: req.body.category,
@@ -141,7 +151,7 @@ router.put('/:id', async (req, res) => {
         { new: true } // Return the new updated product.
     );
 
-    if (!product) { // If product does not exist, return error.
+    if (!updatedProduct) { // If product does not exist, return error.
         return res.status(500).send('The product cannot be updated!');
     }
 
@@ -149,7 +159,7 @@ router.put('/:id', async (req, res) => {
     res.status(200).json({
         success: true,
         message: 'The product has been updated successfully.',
-        product
+        updatedProduct
     });
 });
 
