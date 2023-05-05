@@ -232,7 +232,8 @@ router.put('/gallery-images/:id', uploadOptions.array('images', 10), async (req,
         req.params.id,
         {
             images: imagePaths
-        }
+        },
+        { new: true } // Return the new updated product.
     );
 
     if (!product) { // If product does not exist, return error.
