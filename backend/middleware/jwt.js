@@ -12,6 +12,7 @@ function auth() {
         path: [
             { url: /\/api\/products(.*)/ , methods: ['GET', 'OPTIONS'] },
             { url: /\/api\/categories(.*)/ , methods: ['GET', 'OPTIONS'] },
+            { url: /\/public\/uploads(.*)/ , methods: ['GET', 'OPTIONS'] },
             `${api}/users/login`,
             `${api}/users/register`,
         ]
