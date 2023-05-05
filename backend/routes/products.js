@@ -55,10 +55,14 @@ router.get(`/`, async (req, res) => {
 
 // Create product
 router.post(`/`, uploadOptions.single('image'), async (req, res) => {
-    const category = await Category.findById(req.body.category);
-    if (!category) {
+    const category = await Category.findById(req.body.category); // Check if category exists
+    if (!category) { // If category does not exist, return error.
         return res.status(400).send(`Invalid Category, a category with the id of ${req.body.category} does not exist, please try again.`);
     }
+
+    const file = req.file; // req.file is the image that was uploaded, must have an image in the request.
+    if (!file) return res.status(400).send('No image in the request, please try again.'); // If no image in the request, return error.
+
     const filename = req.file.filename;
     const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
