@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(morgan('tiny'));
 app.use(auth());
 app.use(errorHandler);
+app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
 
 
 const productsRouter = require('./routes/products');
