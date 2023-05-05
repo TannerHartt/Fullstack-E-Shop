@@ -137,7 +137,8 @@ router.put('/:id', async (req, res) => {
             rating: req.body.rating,
             numReviews: req.body.numReviews,
             isFeatured: req.body.isFeatured
-        }
+        },
+        { new: true } // Return the new updated product.
     );
 
     if (!product) { // If product does not exist, return error.
@@ -207,6 +208,43 @@ router.get('/get/featured/:count?', async (req, res) => {
             products
         });
     }
+});
+
+
+router.put('/gallery-images/:id', uploadOptions.array('images', 10), async (req, res) => {
+    // Validate product id
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).send(`Invalid Product, a product with the id of ${req.body.product} does not exist, please try again.`);
+    }
+
+    let imagePaths = [];
+    const files = req.files;
+    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+
+    if (files) {
+        files.map(file => {
+            imagePaths.push(`${basePath}${file.filename}}`);
+        });
+    }
+
+    // If category exists, update product with new data that was sent in.
+    const product = await Product.findByIdAndUpdate(
+        req.params.id,
+        {
+            images: imagePaths
+        }
+    );
+
+    if (!product) { // If product does not exist, return error.
+        return res.status(500).send('The product cannot be updated!');
+    }
+
+    // If product exists, return success message and updated product.
+    res.status(200).json({
+        success: true,
+        message: 'The product has been updated successfully.',
+        product
+    });
 });
 
 module.exports = router;
